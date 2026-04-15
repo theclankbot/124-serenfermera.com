@@ -1,0 +1,87 @@
+---
+import type { ArticleCalloutTone } from "../data/article-types";
+import type { AuthoredHubPage, LandingCard, LandingCardTone } from "../data/landing-types";
+
+const { page } = Astro.props as { page: AuthoredHubPage };
+
+function cardClass(tone?: LandingCardTone) {
+  if (tone === "accent") {
+    return "card accent-card reveal";
+  }
+
+  if (tone === "warm") {
+    return "card warm-card reveal";
+  }
+
+  return "card reveal";
+}
+
+function calloutClass(tone?: ArticleCalloutTone) {
+  return tone && tone !== "default" ? `callout ${tone}` : "callout";
+}
+
+function cardMeta(card: LandingCard) {
+  return card.pills ?? [];
+}
+---
+
+<main>
+  <section class="page-intro">
+    <div class="container">
+      <div class="hero-card reveal">
+        <div>
+          <div class="eyebrow">{page.eyebrow}</div>
+          <h1>{page.heading}</h1>
+          <p class="lede" style="margin-top: 1rem">{page.lede}</p>
+        </div>
+        <div class="hub-banner">
+          <div class="mini-label" style="color: var(--teal)">{page.bannerLabel}</div>
+          <p>{page.bannerBody}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container grid-3">
+      {
+        page.cards.map((card) => (
+          <a class={cardClass(card.tone)} href={card.href}>
+            <div class="chip">{card.chip}</div>
+            <h3>{card.title}</h3>
+            <p>{card.description}</p>
+            {
+              cardMeta(card).length > 0 && (
+                <div class="card-meta">
+                  {cardMeta(card).map((pill) => <span class="meta-pill">{pill}</span>)}
+                </div>
+              )
+            }
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading reveal">
+        <div>
+          <p class="section-kicker">{page.sectionKicker}</p>
+          <h2>{page.sectionTitle}</h2>
+        </div>
+        <p>{page.sectionBody}</p>
+      </div>
+      <div class="split-list">
+        {
+          page.callouts.map((item) => (
+            <div class={calloutClass(item.tone)}>
+              <strong>{item.title}</strong>
+              <p>{item.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</main>

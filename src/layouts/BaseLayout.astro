@@ -1,0 +1,101 @@
+---
+import "../styles/global.css";
+import Analytics from "@vercel/analytics/astro";
+
+type LayoutProps = {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+};
+
+const navigation = [
+  { href: "/cuidados/", label: "Cuidados" },
+  { href: "/tecnicas-y-procedimientos/", label: "Tecnicas" },
+  { href: "/planes-de-cuidados/", label: "Planes" },
+  { href: "/etica-y-liderazgo/", label: "Etica" },
+  { href: "/carrera-en-enfermeria/", label: "Carrera" },
+  { href: "/recursos/", label: "Recursos" }
+];
+
+const { title, description, canonicalPath = "/" } = Astro.props;
+const canonicalUrl = new URL(canonicalPath, Astro.site ?? "https://serenfermera.com").toString();
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Serenfermera" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="header-card">
+          <a class="brand" href="/">
+            <span class="brand-mark">S</span>
+            <span class="brand-copy">
+              <strong>Serenfermera</strong>
+              <span>Biblioteca clinica y profesional</span>
+            </span>
+          </a>
+          <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Abrir menu">
+            Menu
+          </button>
+          <nav class="header-nav" aria-label="Principal">
+            {
+              navigation.map((item) => (
+                <a href={item.href} aria-current={currentPath === item.href ? "page" : undefined}>
+                  {item.label}
+                </a>
+              ))
+            }
+          </nav>
+        </div>
+      </header>
+
+      <slot />
+
+      <footer class="footer">
+        <div class="container footer-card">
+          <div class="footer-grid">
+            <div>
+              <div class="brand">
+                <span class="brand-mark">S</span>
+                <span class="brand-copy">
+                  <strong>Serenfermera</strong>
+                  <span>Cuidados con criterio</span>
+                </span>
+              </div>
+            </div>
+            <div class="footer-links">
+              <a href="/">Inicio</a>
+              {
+                navigation.map((item) => (
+                  <a href={item.href}>{item.label}</a>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      import "../scripts/site.ts";
+    </script>
+    <Analytics />
+  </body>
+</html>

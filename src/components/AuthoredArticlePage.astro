@@ -1,0 +1,190 @@
+---
+import type {
+  ArticleBlock,
+  ArticleCalloutTone,
+  AuthoredArticle
+} from "../data/article-types";
+
+const { article } = Astro.props as { article: AuthoredArticle };
+
+const tocItems = article.sections.map((section) => ({
+  id: section.id,
+  label: section.tocLabel ?? section.title
+}));
+
+function calloutClass(tone?: ArticleCalloutTone) {
+  return tone && tone !== "default" ? `callout ${tone}` : "callout";
+}
+
+function blockKey(sectionId: string, index: number, block: ArticleBlock) {
+  return `${sectionId}-${block.type}-${index}`;
+}
+---
+
+<main>
+  <section class="article-hero">
+    <div class="container">
+      <div class="article-hero-card hero-card reveal">
+        <div class="eyebrow">{article.eyebrow}</div>
+        <h1>{article.title.replace(" | Serenfermera", "")}</h1>
+        <p>{article.intro}</p>
+        <div class="article-header-meta">
+          {article.pills.map((pill) => <span class="article-meta-pill">{pill}</span>)}
+        </div>
+        <div class="summary-grid">
+          {
+            article.summary.map((item) => (
+              <div class="summary-item">
+                <strong>{item.label}</strong>
+                <span>{item.text}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container article-layout">
+      <div class="article-main">
+        {
+          article.sections.map((section) => (
+            <article class="section-card reveal" id={section.id}>
+              <h2>{section.title}</h2>
+              {
+                section.blocks.map((block, index) => {
+                  const key = blockKey(section.id, index, block);
+
+                  if (block.type === "paragraph") {
+                    return <p key={key}>{block.text}</p>;
+                  }
+
+                  if (block.type === "bullets") {
+                    return (
+                      <ul key={key}>
+                        {block.items.map((item) => <li>{item}</li>)}
+                      </ul>
+                    );
+                  }
+
+                  if (block.type === "quote") {
+                    return <div class="quote-strip" key={key}>{block.text}</div>;
+                  }
+
+                  if (block.type === "table") {
+                    return (
+                      <div class="table-wrap" key={key}>
+                        <table>
+                          <thead>
+                            <tr>
+                              {block.columns.map((column) => <th>{column}</th>)}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {
+                              block.rows.map((row) => (
+                                <tr>
+                                  {row.map((cell) => <td>{cell}</td>)}
+                                </tr>
+                              ))
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    );
+                  }
+
+                  if (block.type === "callout") {
+                    return (
+                      <div class={calloutClass(block.tone)} key={key}>
+                        <strong>{block.title}</strong>
+                        <p>{block.body}</p>
+                      </div>
+                    );
+                  }
+
+                  if (block.type === "callout-grid") {
+                    return (
+                      <div class="split-list" key={key}>
+                        {
+                          block.items.map((item) => (
+                            <div class={calloutClass(item.tone)}>
+                              <strong>{item.title}</strong>
+                              <p>{item.body}</p>
+                            </div>
+                          ))
+                        }
+                      </div>
+                    );
+                  }
+
+                  if (block.type === "faq") {
+                    return (
+                      <div key={key}>
+                        {block.lead && <p>{block.lead}</p>}
+                        {
+                          block.items.map((item) => (
+                            <div class="faq-item">
+                              <h3>{item.question}</h3>
+                              <p>{item.answer}</p>
+                            </div>
+                          ))
+                        }
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <ul key={key}>
+                      {
+                        block.items.map((item) => (
+                          <li>
+                            <a href={item.href}>{item.label}</a>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  );
+                })
+              }
+            </article>
+          ))
+        }
+      </div>
+
+      <aside class="toc-card reveal">
+        <h3>{article.tocTitle ?? "En esta guia"}</h3>
+        <nav>
+          {tocItems.map((item) => <a href={`#${item.id}`}>{item.label}</a>)}
+        </nav>
+      </aside>
+    </div>
+  </section>
+
+  {
+    article.related && article.related.length > 0 && (
+      <section class="section">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow">Seguir leyendo</div>
+              <h2>Articulos relacionados</h2>
+            </div>
+          </div>
+          <div class="related-grid">
+            {
+              article.related.map((item) => (
+                <a class="article-card reveal" href={item.href}>
+                  <div class="chip">{item.chip}</div>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+    )
+  }
+</main>

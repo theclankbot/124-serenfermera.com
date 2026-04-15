@@ -1,0 +1,72 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import AuthoredArticlePage from "../../components/AuthoredArticlePage.astro";
+import HubLandingPage from "../../components/HubLandingPage.astro";
+import { authoredArticles, getAuthoredArticle } from "../../data/authored-articles";
+import type { AuthoredArticle } from "../../data/article-types";
+import { authoredHubs, authoredHubSlugs, getAuthoredHub } from "../../data/landings";
+import type { AuthoredHubPage } from "../../data/landing-types";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+type RoutedEntry = CollectionEntry<"hubs"> | CollectionEntry<"articles">;
+
+export async function getStaticPaths() {
+  const [hubs, articles] = await Promise.all([getCollection("hubs"), getCollection("articles")]);
+  const authoredSlugs = new Set(authoredArticles.map((article) => article.slug));
+
+  return [
+    ...hubs
+      .filter((entry) => !authoredHubSlugs.has(entry.data.slug))
+      .map((entry) => ({
+        params: { slug: entry.data.slug },
+        props: { entry }
+      })),
+    ...articles
+      .filter((entry) => !authoredSlugs.has(entry.data.slug))
+      .map((entry) => ({
+        params: { slug: entry.data.slug },
+        props: { entry }
+      })),
+    ...authoredHubs.map((page) => ({
+      params: { slug: page.slug },
+      props: { authoredHub: page }
+    })),
+    ...authoredArticles.map((article) => ({
+      params: { slug: article.slug },
+      props: { authoredArticle: article }
+    }))
+  ];
+}
+
+const { entry, authoredArticle, authoredHub } = Astro.props as {
+  entry?: RoutedEntry;
+  authoredArticle?: AuthoredArticle;
+  authoredHub?: AuthoredHubPage;
+};
+
+const resolvedAuthoredArticle = authoredArticle ?? getAuthoredArticle(Astro.params.slug ?? "");
+const resolvedAuthoredHub = authoredHub ?? getAuthoredHub(Astro.params.slug ?? "");
+
+if (!entry && !resolvedAuthoredArticle && !resolvedAuthoredHub) {
+  throw new Error(`No content found for slug "${Astro.params.slug ?? ""}".`);
+}
+---
+
+<BaseLayout
+  title={resolvedAuthoredArticle?.title ?? resolvedAuthoredHub?.title ?? entry!.data.title}
+  description={resolvedAuthoredArticle?.description ?? resolvedAuthoredHub?.description ?? entry!.data.description}
+  canonicalPath={
+    resolvedAuthoredArticle?.canonicalPath ?? resolvedAuthoredHub?.canonicalPath ?? entry!.data.canonicalPath
+  }
+>
+  {
+    resolvedAuthoredArticle ? (
+      <AuthoredArticlePage article={resolvedAuthoredArticle} />
+    ) : resolvedAuthoredHub ? (
+      <HubLandingPage page={resolvedAuthoredHub} />
+    ) : (
+      <main set:html={entry!.data.bodyHtml}></main>
+    )
+  }
+</BaseLayout>

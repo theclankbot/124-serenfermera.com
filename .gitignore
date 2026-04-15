@@ -1,4 +1,10 @@
-.vercel
 node_modules/
-.DS_Store
-npm-debug.log*
+.astro/
+.vercel/
+dist/
+.tmp-dist*/
+
+src/content/articles/*.json
+src/content/generated/*.json
+src/content/hubs/*.json
+src/content/site/*.json

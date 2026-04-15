@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Pagina no encontrada | Serenfermera"
+  description="La pagina que buscas ya no esta aqui o se ha movido dentro de Serenfermera."
+  canonicalPath="/404/"
+>
+  <main>
+    <section class="page-intro">
+      <div class="container">
+        <div class="hero-card reveal">
+          <div class="eyebrow">Error 404</div>
+          <h1 style="max-width: 12ch">La pagina no esta disponible.</h1>
+          <p class="lede" style="margin-top: 1rem">
+            La URL puede haber cambiado o el contenido puede seguir en proceso de migracion al nuevo sitio en Astro.
+          </p>
+          <div class="hero-actions" style="margin-top: 1.5rem">
+            <a class="button primary" href="/">Volver al inicio</a>
+            <a class="button secondary" href="/cuidados/">Explorar cuidados</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

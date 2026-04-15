@@ -1,0 +1,189 @@
+---
+import type { AuthoredHomePage, LandingCard, LandingCardTone } from "../data/landing-types";
+
+const { page } = Astro.props as { page: AuthoredHomePage };
+
+function cardClass(tone?: LandingCardTone) {
+  if (tone === "accent") {
+    return "card accent-card reveal";
+  }
+
+  if (tone === "warm") {
+    return "card warm-card reveal";
+  }
+
+  return "card reveal";
+}
+
+function actionClass(variant: AuthoredHomePage["actions"][number]["variant"]) {
+  if (variant === "secondary") {
+    return "button secondary";
+  }
+
+  if (variant === "ghost") {
+    return "button ghost";
+  }
+
+  return "button primary";
+}
+
+function articleCardPills(card: LandingCard) {
+  return card.pills ?? [];
+}
+---
+
+<main>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-card reveal">
+        <div class="eyebrow">{page.eyebrow}</div>
+        <h1>{page.heading}</h1>
+        <p class="lede">{page.lede}</p>
+        <div class="hero-actions" style="margin-top: 1.5rem">
+          {
+            page.actions.map((action) => (
+              <a class={actionClass(action.variant)} href={action.href}>{action.label}</a>
+            ))
+          }
+        </div>
+        <div class="hero-stats">
+          {
+            page.stats.map((stat) => (
+              <div class="stat-card">
+                <strong>{stat.title}</strong>
+                <span>{stat.text}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <aside class="feature-panel reveal">
+        <div class="mini-label">{page.featurePanel.label}</div>
+        <h3 style="margin-top: 0.5rem">{page.featurePanel.title}</h3>
+        <p style="margin-top: 0.85rem">{page.featurePanel.body}</p>
+        <div class="feature-stack">
+          {
+            page.featurePanel.items.map((item) => (
+              <div class="feature-chip">
+                <strong>{item.title}</strong>
+                <span>{item.text}</span>
+              </div>
+            ))
+          }
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading reveal">
+        <div>
+          <div class="eyebrow">Explorar por temas</div>
+          <h2>Una navegacion simple para llegar antes a lo que necesitas.</h2>
+        </div>
+        <p>
+          El contenido se agrupa por areas que una enfermera reconoce enseguida: cuidados, tecnicas,
+          planes, etica, carrera y recursos de apoyo.
+        </p>
+      </div>
+      <div class="grid-3">
+        {
+          page.categories.map((card) => (
+            <a class={cardClass(card.tone)} href={card.href}>
+              <div class="chip">{card.chip}</div>
+              <h3>{card.title}</h3>
+              <p>{card.description}</p>
+              {
+                articleCardPills(card).length > 0 && (
+                  <div class="card-meta">
+                    {articleCardPills(card).map((pill) => <span class="meta-pill">{pill}</span>)}
+                  </div>
+                )
+              }
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="container band-wrap reveal">
+      <div class="band-grid">
+        <div>
+          <div class="eyebrow" style="color: rgba(255, 255, 255, 0.7)">{page.band.eyebrow}</div>
+          <h2>{page.band.title}</h2>
+          <p style="margin-top: 0.9rem">{page.band.body}</p>
+        </div>
+        <div class="mini-grid two">
+          {
+            page.band.signals.map((signal) => (
+              <div class="signal-card">
+                <strong>{signal.title}</strong>
+                <span>{signal.text}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container topic-grid">
+      <div class="stack">
+        <div class="section-heading reveal">
+          <div>
+            <div class="eyebrow">Lecturas recomendadas</div>
+            <h2>Articulos que resuelven dudas frecuentes.</h2>
+          </div>
+        </div>
+        <div class="grid-2">
+          {
+            page.recommended.map((card) => (
+              <a class="article-card reveal" href={card.href}>
+                <div class="chip">{card.chip}</div>
+                <h3>{card.title}</h3>
+                <p>{card.description}</p>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <aside class="list-card reveal">
+        <div class="eyebrow">{page.quickLinks.eyebrow}</div>
+        <h3 style="margin-top: 0.4rem">{page.quickLinks.title}</h3>
+        <p>{page.quickLinks.body}</p>
+        <ul>
+          {page.quickLinks.items.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading reveal">
+        <div>
+          <div class="eyebrow">{page.usage.eyebrow}</div>
+          <h2>{page.usage.title}</h2>
+        </div>
+        <p>{page.usage.body}</p>
+      </div>
+      <div class="grid-4">
+        {
+          page.usage.steps.map((step) => (
+            <div class="resource-card reveal">
+              <div class="mini-label" style="color: var(--teal)">{step.step}</div>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</main>

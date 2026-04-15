@@ -1,0 +1,13 @@
+---
+import HomeLandingPage from "../components/HomeLandingPage.astro";
+import { authoredHome } from "../data/landings";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title={authoredHome.title}
+  description={authoredHome.description}
+  canonicalPath={authoredHome.canonicalPath}
+>
+  <HomeLandingPage page={authoredHome} />
+</BaseLayout>
