@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://serenfermera.com/sitemap.xml
