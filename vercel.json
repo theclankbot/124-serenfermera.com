@@ -2,6 +2,26 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
+      "source": "/salud-mental/page/5",
+      "destination": "/salud-mental/",
+      "permanent": true
+    },
+    {
+      "source": "/salud-mental/page/5/",
+      "destination": "/salud-mental/",
+      "permanent": true
+    },
+    {
+      "source": "/dilema-etico-en-",
+      "destination": "/dilema-etico-en-ejemplos-de-enfermeria/",
+      "permanent": true
+    },
+    {
+      "source": "/dilema-etico-en-/",
+      "destination": "/dilema-etico-en-ejemplos-de-enfermeria/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [
         {
