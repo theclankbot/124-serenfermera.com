@@ -4,6 +4,7 @@ import type {
   ArticleCalloutTone,
   AuthoredArticle
 } from "../data/article-types";
+import AdSenseUnit from "./AdSenseUnit.astro";
 
 const { article } = Astro.props as { article: AuthoredArticle };
 
@@ -48,8 +49,10 @@ function blockKey(sectionId: string, index: number, block: ArticleBlock) {
   <section class="section">
     <div class="container article-layout">
       <div class="article-main">
+        <AdSenseUnit class="top-ad" />
         {
-          article.sections.map((section) => (
+          article.sections.map((section, sectionIndex) => (
+            <>
             <article class="section-card reveal" id={section.id}>
               <h2>{section.title}</h2>
               {
@@ -149,6 +152,8 @@ function blockKey(sectionId: string, index: number, block: ArticleBlock) {
                 })
               }
             </article>
+            {(sectionIndex === 0 || sectionIndex === 2) && <AdSenseUnit />}
+            </>
           ))
         }
       </div>

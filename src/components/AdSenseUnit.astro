@@ -1,0 +1,23 @@
+---
+const ADSENSE_CLIENT = "ca-pub-8781821876227840";
+const ADSENSE_SLOT = import.meta.env.PUBLIC_ADSENSE_DISPLAY_SLOT || "1711490890";
+const className = Astro.props.class ?? "";
+---
+
+{
+  ADSENSE_SLOT && (
+    <div class={`adsense-unit ${className}`.trim()} aria-label="Publicidad">
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client={ADSENSE_CLIENT}
+        data-ad-slot={ADSENSE_SLOT}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+      <script is:inline>
+        {`try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}`}
+      </script>
+    </div>
+  )
+}

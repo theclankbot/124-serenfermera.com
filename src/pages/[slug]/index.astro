@@ -47,9 +47,23 @@ const { entry, authoredArticle, authoredHub } = Astro.props as {
 
 const resolvedAuthoredArticle = authoredArticle ?? getAuthoredArticle(Astro.params.slug ?? "");
 const resolvedAuthoredHub = authoredHub ?? getAuthoredHub(Astro.params.slug ?? "");
+const rawBodyHtml = entry?.data.bodyHtml ?? "";
+const bodyHtml = injectAdsIntoHtml(rawBodyHtml);
 
 if (!entry && !resolvedAuthoredArticle && !resolvedAuthoredHub) {
   throw new Error(`No content found for slug "${Astro.params.slug ?? ""}".`);
+}
+
+function injectAdsIntoHtml(html: string) {
+  const slot = import.meta.env.PUBLIC_ADSENSE_DISPLAY_SLOT || "1711490890";
+  const adHtml = `<div class="adsense-unit" aria-label="Publicidad"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8781821876227840" data-ad-slot="${slot}" data-ad-format="auto" data-full-width-responsive="true"></ins><script>try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}</script></div>`;
+  const htmlWithTopAd = html.replace('<div class="article-main">', `<div class="article-main">${adHtml}`);
+  let index = 0;
+
+  return htmlWithTopAd.replace(/<\/article>/g, (match) => {
+    index += 1;
+    return index === 1 || index === 3 ? `${match}${adHtml}` : match;
+  });
 }
 ---
 
@@ -66,7 +80,7 @@ if (!entry && !resolvedAuthoredArticle && !resolvedAuthoredHub) {
     ) : resolvedAuthoredHub ? (
       <HubLandingPage page={resolvedAuthoredHub} />
     ) : (
-      <main set:html={entry!.data.bodyHtml}></main>
+      <main set:html={bodyHtml}></main>
     )
   }
 </BaseLayout>
